@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemeZone 😂 | Ultimate Meme Hub</title>
+
+<style>
+:root {
+  --bg: #101014;
+  --card: #1d1d25;
+  --text: #ffffff;
+  --accent: #a855f7;
+  --muted: #b6b6c5;
+}
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: .3s;
+}
+
+header {
+  background: linear-gradient(120deg,#7c3aed,#ec4899);
+  padding: 25px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.logo { font-size: 28px; font-weight: 900; }
+
+button, .upload-label {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:hover, .upload-label:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+.hero {
+  text-align: center;
+  padding: 45px 15px 25px;
+}
+
+.hero h1 {
+  font-size: clamp(30px,5vw,48px);
+  margin-bottom: 10px;
+}
+
+.hero p { color: var(--muted); }
+
+.controls {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+input, select {
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+}
+
+#search { flex: 1; min-width: 180px; }
+
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 15px 25px;
+  flex-wrap: wrap;
+}
+
+.categories button {
+  background: var(--card);
+  border: 1px solid #383844;
+}
+
+.categories button.active { background: var(--accent); }
+
+main {
+  max-width: 1300px;
+  margin: auto;
+  padding: 10px 20px 50px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0 20px;
+}
+
+.meme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+  gap: 22px;
+}
+
+.meme-card {
+  background: var(--card);
+  border: 1px solid #30303b;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: .25s;
+}
+
+.meme-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
+.meme-card img {
+  width: 100%;
+  height: 270px;
+  object-fit: contain;
+  background: #09090c;
+  display: block;
+  cursor: pointer;
+}
+
+.meme-info { padding: 15px; }
+
+.meme-info h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.tag {
+  color: #d8b4fe;
+  font-size: 12px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.card-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.card-buttons button { flex: 1; }
+
+.like-btn { background: #353542; }
+.download-btn { background: #7c3aed; }
+.delete-btn { background: #b91c1c; }
+
+.empty {
+  text-align: center;
+  padding: 50px 10px;
+  color: var(--muted);
+  display: none;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  border-top: 1px solid #30303b;
+  color: var(--muted);
+}
+
+#upload { display: none; }
+
+#previewModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000e;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#previewModal img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.modal-content { text-align: center; }
+
+.close-btn {
+  display: block;
+  margin: 15px auto;
+  background: #dc2626;
+}
+
+@media(max-width:600px) {
+  header { justify-content: center; text-align: center; }
+  .meme-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .meme-card img { height: 190px; }
+  .meme-info { padding: 10px; }
+  .meme-info h3 { font-size: 14px; }
+  .card-buttons { flex-direction: column; }
+  .card-buttons button { padding: 9px; }
+}
+
+@media(max-width:360px) {
+  .meme-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">😂 MemeZone</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <label class="upload-label" for="upload">➕ Upload Meme</label>
+    <button id="themeBtn">🌙 Theme</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Welcome to MemeZone 🔥</h1>
+  <p>Your daily dose of memes, laughter and internet chaos.</p>
+  <p>🤣 Laugh more. Scroll more. Share the fun.</p>
+</section>
+
+<div class="controls">
+  <input id="search" type="search" placeholder="🔍 Search memes...">
+  <select id="sort">
+    <option value="default">Latest first</option>
+    <option value="likes">Most liked</option>
+  </select>
+  <input type="file" id="upload" accept="image/*" multiple>
+</div>
+
+<div class="categories">
+  <button class="active" data-category="All">🔥 All</button>
+  <button data-category="Funny">😂 Funny</button>
+  <button data-category="Gaming">🎮 Gaming</button>
+  <button data-category="School">📚 School</button>
+  <button data-category="Relatable">😩 Relatable</button>
+  <button data-category="Animals">🐱 Animals</button>
+  <button data-category="My Uploads">📤 My Uploads</button>
+</div>
+
+<main>
+  <div class="section-title">
+    <h2>🔥 Meme Collection</h2>
+    <span id="memeCount"></span>
+  </div>
+
+  <div class="meme-grid" id="memeGrid"></div>
+  <div class="empty" id="empty">😢 No memes found. Try another search or upload one!</div>
+</main>
+
+<footer>
+  <p>😂 MemeZone — Made for meme lovers.</p>
+  <p>Upload your own memes and spread the laughter!</p>
+</footer>
+
+<div id="previewModal">
+  <div class="modal-content">
+    <img id="previewImage" alt="Meme preview">
+    <button class="close-btn" id="closePreview">✖ Close</button>
+  </div>
+</div>
+
+<script>
+const starterMemes = [
+  {
+    title: "When the Wi-Fi stops 💀",
+    category: "Relatable",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  },
+  {
+    title: "Monday morning mood 😴",
+    category: "Funny",
+    image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  },
+  {
+    title: "Gaming all night 🎮",
+    category: "Gaming",
+    image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  },
+  {
+    title: "School exam panic 📚",
+    category: "School",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  },
+  {
+    title: "Cat has no responsibilities 🐱",
+    category: "Animals",
+    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  },
+  {
+    title: "Me pretending everything is fine 😂",
+    category: "Relatable",
+    image: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=700&q=80",
+    likes: 0
+  }
+];
+
+let memes = starterMemes.map((meme, index) => ({
+  ...meme,
+  id: "starter-" + index,
+  uploaded: false
+}));
+
+let currentCategory = "All";
+let searchTerm = "";
+
+const grid = document.getElementById("memeGrid");
+const empty = document.getElementById("empty");
+const count = document.getElementById("memeCount");
+
+function renderMemes() {
+  grid.innerHTML = "";
+
+  let filtered = memes.filter(meme => {
+    const matchesSearch =
+      meme.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      meme.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      currentCategory === "All" ||
+      (currentCategory === "My Uploads"
+        ? meme.uploaded
+        : meme.category === currentCategory);
+
+    return matchesSearch && matchesCategory;
+  });
+
+  if (document.getElementById("sort").value === "likes") {
+    filtered.sort((a, b) => b.likes - a.likes);
+  }
+
+  count.textContent = filtered.length + " memes";
+
+  empty.style.display = filtered.length ? "none" : "block";
+
+  filtered.forEach(meme => {
+    const card = document.createElement("article");
+    card.className = "meme-card";
+
+    const image = document.createElement("img");
+    image.src = meme.image;
+    image.alt = meme.title;
+    image.loading = "lazy";
+    image.addEventListener("click", () => openPreview(meme.image));
+
+    const info = document.createElement("div");
+    info.className = "meme-info";
+
+    const title = document.createElement("h3");
+    title.textContent = meme.title;
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = "#" + meme.category;
+
+    const buttons = document.createElement("div");
+    buttons.className = "card-buttons";
+
+    const like = document.createElement("button");
+    like.className = "like-btn";
+    like.textContent = "❤️ " + meme.likes;
+    like.addEventListener("click", () => {
+      meme.likes++;
+      renderMemes();
+    });
+
+    const download = document.createElement("button");
+    download.className = "download-btn";
+    download.textContent = "⬇ Save";
+    download.addEventListener("click", () => downloadMeme(meme));
+
+    buttons.append(like, download);
+
+    if (meme.uploaded) {
+      const remove = document.createElement("button");
+      remove.className = "delete-btn";
+      remove.textContent = "🗑";
+      remove.title = "Remove uploaded meme";
+      remove.addEventListener("click", () => {
+        memes = memes.filter(item => item.id !== meme.id);
+        renderMemes();
+      });
+      buttons.append(remove);
+    }
+
+    info.append(title, tag, buttons);
+    card.append(image, info);
+    grid.append(card);
+  });
+}
+
+function downloadMeme(meme) {
+  const link = document.createElement("a");
+  link.href = meme.image;
+  link.download = (meme.title || "meme").replace(/[^a-z0-9]/gi, "_") + ".jpg";
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.click();
+}
+
+document.getElementById("upload").addEventListener("change", event => {
+  const files = Array.from(event.target.files || []);
+  const maxSize = 8 * 1024 * 1024;
+  const allowed = files.filter(file => {
+    if (!file.type.startsWith("image/")) {
+      alert(file.name + " is not an image.");
+      return false;
+    }
+    if (file.size > maxSize) {
+      alert(file.name + " is larger than 8 MB.");
+      return false;
+    }
+    return true;
+  });
+
+  if (allowed.length) {
+    let category = prompt(
+      "Choose category: Funny, Gaming, School, Relatable, Animals",
+      "Funny"
+    ) || "Funny";
+
+    const validCategories = [
+      "Funny", "Gaming", "School", "Relatable", "Animals"
+    ];
+
+    category = validCategories.find(
+      item => item.toLowerCase() === category.trim().toLowerCase()
+    ) || "Funny";
+
+    allowed.forEach(file => {
+      const reader = new FileReader();
+
+      reader.onload = e => {
+        memes.unshift({
+          id: "upload-" + Date.now() + "-" + Math.random(),
+          title: file.name.replace(/\.[^.]+$/, ""),
+          category,
+          image: e.target.result,
+          likes: 0,
+          uploaded: true
+        });
+        renderMemes();
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    currentCategory = "All";
+    document.querySelectorAll(".categories button").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.category === "All");
+    });
+  }
+
+  event.target.value = "";
+});
+
+document.getElementById("search").addEventListener("input", event => {
+  searchTerm = event.target.value;
+  renderMemes();
+});
+
+document.getElementById("sort").addEventListener("change", renderMemes);
+
+document.querySelectorAll(".categories button").forEach(button => {
+  button.addEventListener("click", () => {
+    currentCategory = button.dataset.category;
+
+    document.querySelectorAll(".categories button").forEach(btn => {
+      btn.classList.toggle("active", btn === button);
+    });
+
+    renderMemes();
+  });
+});
+
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const dark = getComputedStyle(document.body)
+    .getPropertyValue("--bg").trim() === "#101014";
+
+  if (dark) {
+    document.body.style.setProperty("--bg", "#f4f4f8");
+    document.body.style.setProperty("--card", "#ffffff");
+    document.body.style.setProperty("--text", "#171722");
+    document.body.style.setProperty("--muted", "#626273");
+    document.getElementById("themeBtn").textContent = "☀️ Theme";
+  } else {
+    document.body.style.setProperty("--bg", "#101014");
+    document.body.style.setProperty("--card", "#1d1d25");
+    document.body.style.setProperty("--text", "#ffffff");
+    document.body.style.setProperty("--muted", "#b6b6c5");
+    document.getElementById("themeBtn").textContent = "🌙 Theme";
+  }
+});
+
+function openPreview(src) {
+  document.getElementById("previewImage").src = src;
+  document.getElementById("previewModal").style.display = "flex";
+}
+
+document.getElementById("closePreview").addEventListener("click", () => {
+  document.getElementById("previewModal").style.display = "none";
+});
+
+document.getElementById("previewModal").addEventListener("click", event => {
+  if (event.target.id === "previewModal") {
+    event.currentTarget.style.display = "none";
+  }
+});
+
+renderMemes();
+</script>
+
+</body>
+</html>
